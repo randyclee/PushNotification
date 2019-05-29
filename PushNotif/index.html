@@ -1,0 +1,61 @@
+<html>
+<header><title>This is title</title></header>
+
+<body>
+  Hello World
+  <script src="/__/firebase/5.11.1/firebase-app.js"></script>
+  <script src="/__/firebase/5.11.1/firebase-messaging.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+   <script>
+   // Your web app's Firebase configuration
+   var firebaseConfig = {
+     apiKey: "AIzaSyDX2V0h0iLLrLADlAUmoBLk4zHG_xzAEKU",
+     authDomain: "pushnotification-cbd2e.firebaseapp.com",
+     databaseURL: "https://pushnotification-cbd2e.firebaseio.com",
+     projectId: "pushnotification-cbd2e",
+     storageBucket: "pushnotification-cbd2e.appspot.com",
+     messagingSenderId: "117879701626",
+     appId: "1:117879701626:web:c372a9d578949cbb"
+   };
+
+     // Initialize Firebase
+     if (!firebase.apps.length) {
+       firebase.initializeApp(config);
+     }
+    const messaging = firebase.messaging();
+    //2
+    messaging.usePublicVapidKey("BMvX3c_ZBmaPLgOl3EWp0QfY0MxLObUUf-P-l1rcrMhU3cCVY_6v9gmb0JfwsmRHoYQru7uwI1NPynqylpV5jq8");
+
+    messaging.requestPermission()
+    .then(function(){
+        console.log("have permission");
+        return messaging.getToken();
+    })
+    .then(function(token){
+        console.log(token);
+        var MongoClient = require('mongodb').MongoClient;
+        var url = "mongodb+srv://fish:fish@burst-0-mfedp.mongodb.net/Brust_user?retryWrites=true";
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
+          var dbo = db.db("user");
+          var myobj = { registration_id: token};
+          dbo.collection("test").insertOne(myobj, function(err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+          });
+        });
+    })
+    .catch(function(err){
+      console.log("error");
+    })
+    messaging.onMessage(function(payload){
+      console.log('Message recieved ',payload);
+    });
+   </script>
+</body>
+</html>
